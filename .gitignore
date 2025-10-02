@@ -8,7 +8,7 @@ venv/
 
 # Data files (optional, since they are large)
 *.csv
-*.pkl
+
 
 # Mac system files
 .DS_Store

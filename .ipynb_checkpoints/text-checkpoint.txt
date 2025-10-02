@@ -1,0 +1,5 @@
+	•	Step 1: Add Confidence Score visualization to Prediction page.
+	•	Step 2: Enhance SHAP page with toggle (local vs global).
+	•	Step 3: Add Live Monitoring dashboard (simulated streaming).
+	•	Step 4: Add Comparison Mode.
+	•	Step 5: Apply UI/UX polish (make it look like a professional product).

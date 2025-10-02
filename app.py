@@ -7,6 +7,15 @@ import numpy as np
 import time
 
 # -------------------------------
+# Load custom CSS (UI polish)
+# -------------------------------
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+local_css("style.css")
+
+# -------------------------------
 # Load Model and Dataset
 # -------------------------------
 @st.cache_data
@@ -30,6 +39,7 @@ page = st.sidebar.radio("Go to", ["Home", "Prediction", "Model Explanation", "Co
 # Home
 # -------------------------------
 if page == "Home":
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.title("💧 Water Quality Classification Dashboard")
     st.write("""
     Welcome to the **Water Quality Classification Dashboard**!  
@@ -39,11 +49,13 @@ if page == "Home":
     - 🔹 Compare multiple water samples side-by-side with **Comparison Mode**  
     - 🔹 Monitor **real-time sensor data (simulated)** in **Live Monitoring**  
     """)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # -------------------------------
 # Prediction
 # -------------------------------
 elif page == "Prediction":
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.title("🤖 Water Quality Prediction")
     st.write("Enter values for the features below:")
 
@@ -60,9 +72,9 @@ elif page == "Prediction":
             columns=["EC", "TDS", "Na", "TH", "Cl", "pH"]
         )
 
-        # 🔹 Prediction
+        # Prediction
         prediction = model.predict(input_data)[0]
-        proba = model.predict_proba(input_data)[0]   # <-- FIXED: define proba here
+        proba = model.predict_proba(input_data)[0]
 
         # Save for SHAP use
         st.session_state["last_input"] = input_data  
@@ -71,7 +83,7 @@ elif page == "Prediction":
 
         st.success(f"💡 Predicted Water Quality: **{prediction}**")
 
-        # 🔹 Confidence Table
+        # Confidence Table
         proba_df = pd.DataFrame({
             "Class": model.classes_, 
             "Confidence (%)": proba * 100
@@ -80,7 +92,7 @@ elif page == "Prediction":
         st.subheader("📊 Prediction Confidence")
         st.dataframe(proba_df.style.format({"Confidence (%)": "{:.2f}"}))
 
-        # 🔹 Confidence Chart
+        # Confidence Chart
         colors = ["green" if c == "Excellent" else "gold" if c == "Good" else "red" for c in proba_df["Class"]]
         fig, ax = plt.subplots()
         bars = ax.barh(proba_df["Class"], proba_df["Confidence (%)"], color=colors)
@@ -96,11 +108,14 @@ elif page == "Prediction":
                         ha='left', va='center')
 
         st.pyplot(fig)
+        plt.close(fig)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # -------------------------------
 # Model Explanation (SHAP)
 # -------------------------------
 elif page == "Model Explanation":
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.title("📖 Model Explanation with SHAP")
 
     explainer = shap.TreeExplainer(model)
@@ -140,11 +155,13 @@ elif page == "Model Explanation":
     fig, ax = plt.subplots()
     shap.plots.waterfall(shap_single, show=False)
     st.pyplot(fig)
+    plt.close(fig)
 
     st.subheader("2. SHAP Global Feature Importance")
     fig, ax = plt.subplots()
     shap.plots.bar(shap_values[..., class_index], show=False)
     st.pyplot(fig)
+    plt.close(fig)
 
     st.subheader("3. Explanation in Simple Terms")
     st.write(f"""
@@ -153,10 +170,13 @@ elif page == "Model Explanation":
     - **Red bars (positive values)** = pushed prediction *towards this class*.  
     - **Blue bars (negative values)** = pushed prediction *away from this class*.  
     """)
+    st.markdown('</div>', unsafe_allow_html=True)
+
 # -------------------------------
 # Comparison Mode
 # -------------------------------
 elif page == "Comparison Mode":
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.title("📊 Comparison Mode")
 
     st.write("""
@@ -197,20 +217,22 @@ elif page == "Comparison Mode":
                     ax.text(v + 1, j, f"{v:.2f}%", va='center')
 
                 st.pyplot(fig)
+                plt.close(fig)
         else:
             st.error(f"❌ CSV must contain columns: {required_cols}")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # -------------------------------
 # Live Monitoring (Simulated)
 # -------------------------------
 elif page == "Live Monitoring":
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.title("📡 Live Monitoring Dashboard (Simulated)")
     st.write("This simulates sensor data streaming every few seconds...")
 
     if "live_data" not in st.session_state:
         st.session_state["live_data"] = pd.DataFrame(columns=["EC", "TDS", "Na", "TH", "Cl", "pH", "Prediction"])
 
-    # Generate new random sample
     new_sample = {
         "EC": float(np.random.uniform(100, 1500)),
         "TDS": float(np.random.uniform(50, 1200)),
@@ -223,7 +245,6 @@ elif page == "Live Monitoring":
     prediction = model.predict(input_data)[0]
     new_sample["Prediction"] = prediction
 
-    # Append to session and keep last 20 samples
     st.session_state["live_data"] = pd.concat([st.session_state["live_data"], pd.DataFrame([new_sample])]).tail(20)
 
     st.subheader("🔹 Latest Reading")
@@ -235,6 +256,6 @@ elif page == "Live Monitoring":
     st.subheader("📊 Recent Predictions Count")
     st.bar_chart(st.session_state["live_data"]["Prediction"].value_counts())
 
-    # Refresh every 2 seconds
     time.sleep(2)
     st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)

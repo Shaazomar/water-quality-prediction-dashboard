@@ -1,0 +1,29 @@
+/* Background and font for the Streamlit app container */
+[data-testid="stAppViewContainer"] {
+    background-color: #f8f9fa !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+/* Center the headers from markdown */
+.stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+    text-align: center !important;
+    color: #2c3e50 !important;
+}
+
+/* Success alert style */
+.stAlert {
+    border-radius: 10px !important;
+    padding: 15px !important;
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border: 1px solid #c3e6cb !important;
+}
+
+/* Card style for wrapping your UI parts */
+.card {
+    background: white !important;
+    border-radius: 15px !important;
+    padding: 20px !important;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1) !important;
+    margin-bottom: 20px !important;
+}

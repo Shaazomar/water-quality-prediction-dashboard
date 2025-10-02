@@ -4,13 +4,13 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
-/* Center and style main headings coming from markdown */
+/* Center and style main headings */
 .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
     text-align: center !important;
     color: #2c3e50 !important;
 }
 
-/* Style success alert boxes */
+/* Style success alerts */
 .stAlert {
     border-radius: 10px !important;
     padding: 15px !important;
@@ -28,13 +28,32 @@
     margin-bottom: 20px !important;
 }
 
-/* Hide Streamlit's default top search bar/command palette */
+/* Hide default Streamlit top search bar */
 [data-testid="stAppViewBlockContainer"] > div:first-child {
     display: none !important;
 }
-
-/* Additional hiding if the search bar is rendered as header */
 div[data-testid="stHeader"], 
 header[data-testid="stHeader"] {
     display: none !important;
+}
+
+/* Responsive styling for mobile devices */
+@media only screen and (max-width: 600px) {
+    /* Reduce sidebar width and font size */
+    .css-1d391kg {
+        width: 180px !important;
+        font-size: 12px !important;
+    }
+
+    /* Reduce sidebar label clipping */
+    .css-10trblm {
+        white-space: normal !important;
+        overflow-wrap: break-word !important;
+    }
+    
+    /* Reduce main content horizontal padding */
+    .css-1oeg751 {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
 }

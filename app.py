@@ -41,7 +41,7 @@ page = st.sidebar.radio("Go to", ["Home", "Prediction", "Model Explanation", "Co
 if page == "Home":
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.title("💧 Water Quality Classification Dashboard")
-    st.write("""
+    st.info("""
     Welcome to the **Water Quality Classification Dashboard**!  
 
     - 🔹 Predict water quality based on 6 key features: **EC, TDS, Na, TH, Cl, pH**  
@@ -57,7 +57,7 @@ if page == "Home":
 elif page == "Prediction":
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.title("🤖 Water Quality Prediction")
-    st.write("Enter values for the features below:")
+    st.info("Enter the values below for each feature, then click Predict to see your water quality.")
 
     ec = st.number_input("Enter EC (µS/cm)", value=float(df["EC"].median()))
     tds = st.number_input("Enter TDS (mg/L)", value=float(df["TDS"].median()))
@@ -66,39 +66,45 @@ elif page == "Prediction":
     cl = st.number_input("Enter Cl (mg/L)", value=float(df["Cl"].median()))
     ph = st.number_input("Enter pH", value=float(df["pH"].median()))
 
+    with st.expander("What do these features mean?"):
+        st.write("""
+        - **EC**: Electrical Conductivity (water's ability to conduct electricity)  
+        - **TDS**: Total Dissolved Solids (amount of dissolved substances in water)  
+        - **Na**: Sodium concentration  
+        - **TH**: Total Hardness (minerals like calcium and magnesium)  
+        - **Cl**: Chloride concentration  
+        - **pH**: Acidity or alkalinity of water  
+        """)
+
     if st.button("Predict"):
         input_data = pd.DataFrame(
             [[ec, tds, na, th, cl, ph]], 
             columns=["EC", "TDS", "Na", "TH", "Cl", "pH"]
         )
 
-        # Prediction
         prediction = model.predict(input_data)[0]
         proba = model.predict_proba(input_data)[0]
 
-        # Save for SHAP use
         st.session_state["last_input"] = input_data  
         st.session_state["last_prediction"] = prediction  
-        st.session_state["last_proba"] = proba  
+        st.session_state["last_proba"] = proba
 
         st.success(f"💡 Predicted Water Quality: **{prediction}**")
+        st.balloons()
 
-        # Confidence Table
         proba_df = pd.DataFrame({
-            "Class": model.classes_, 
+            "Class": model.classes_,
             "Confidence (%)": proba * 100
         }).sort_values(by="Confidence (%)", ascending=False)
 
         st.subheader("📊 Prediction Confidence")
         st.dataframe(proba_df.style.format({"Confidence (%)": "{:.2f}"}))
 
-        # Confidence Chart
         colors = ["green" if c == "Excellent" else "gold" if c == "Good" else "red" for c in proba_df["Class"]]
         fig, ax = plt.subplots()
         bars = ax.barh(proba_df["Class"], proba_df["Confidence (%)"], color=colors)
         ax.set_xlabel("Confidence (%)")
         ax.set_title("Prediction Confidence by Class")
-
         for bar in bars:
             width = bar.get_width()
             ax.annotate(f'{width:.2f}%', 
@@ -106,7 +112,6 @@ elif page == "Prediction":
                         xytext=(3, 0), 
                         textcoords="offset points", 
                         ha='left', va='center')
-
         st.pyplot(fig)
         plt.close(fig)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -120,7 +125,6 @@ elif page == "Model Explanation":
 
     explainer = shap.TreeExplainer(model)
 
-    # Use last input if available, otherwise fallback
     if "last_input" in st.session_state:
         input_data = st.session_state["last_input"]
         predicted_class = st.session_state.get("last_prediction", None)
@@ -135,7 +139,6 @@ elif page == "Model Explanation":
     shap_values = explainer(input_data)
     class_names = model.classes_
 
-    # If user has a prediction, default to that class
     if predicted_class:
         selected_class = st.selectbox("Choose class to explain", class_names, 
                                       index=list(class_names).index(predicted_class))
@@ -233,6 +236,7 @@ elif page == "Live Monitoring":
     if "live_data" not in st.session_state:
         st.session_state["live_data"] = pd.DataFrame(columns=["EC", "TDS", "Na", "TH", "Cl", "pH", "Prediction"])
 
+    # Generate new random sample
     new_sample = {
         "EC": float(np.random.uniform(100, 1500)),
         "TDS": float(np.random.uniform(50, 1200)),
@@ -245,6 +249,7 @@ elif page == "Live Monitoring":
     prediction = model.predict(input_data)[0]
     new_sample["Prediction"] = prediction
 
+    # Append to session and keep last 20 samples
     st.session_state["live_data"] = pd.concat([st.session_state["live_data"], pd.DataFrame([new_sample])]).tail(20)
 
     st.subheader("🔹 Latest Reading")
@@ -256,6 +261,7 @@ elif page == "Live Monitoring":
     st.subheader("📊 Recent Predictions Count")
     st.bar_chart(st.session_state["live_data"]["Prediction"].value_counts())
 
+    # Refresh every 2 seconds
     time.sleep(2)
     st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)

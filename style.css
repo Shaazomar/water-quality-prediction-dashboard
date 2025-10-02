@@ -1,16 +1,16 @@
-/* Background and font for the Streamlit app container */
+/* Overall background and font */
 [data-testid="stAppViewContainer"] {
     background-color: #f8f9fa !important;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
-/* Center the headers from markdown */
+/* Center and style main headings coming from markdown */
 .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
     text-align: center !important;
     color: #2c3e50 !important;
 }
 
-/* Success alert style */
+/* Style success alert boxes */
 .stAlert {
     border-radius: 10px !important;
     padding: 15px !important;
@@ -19,11 +19,22 @@
     border: 1px solid #c3e6cb !important;
 }
 
-/* Card style for wrapping your UI parts */
+/* Main card style for content sections */
 .card {
     background: white !important;
     border-radius: 15px !important;
     padding: 20px !important;
-    box-shadow: 0px 4px 8px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
     margin-bottom: 20px !important;
+}
+
+/* Hide Streamlit's default top search bar/command palette */
+[data-testid="stAppViewBlockContainer"] > div:first-child {
+    display: none !important;
+}
+
+/* Additional hiding if the search bar is rendered as header */
+div[data-testid="stHeader"], 
+header[data-testid="stHeader"] {
+    display: none !important;
 }

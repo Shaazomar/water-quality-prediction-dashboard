@@ -56,7 +56,7 @@ if page == "Home":
 # -------------------------------
 elif page == "Prediction":
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.title("🤖 Water Quality Prediction")
+    st.title("Water Quality Prediction")
     st.info("Enter the values below for each feature, then click Predict to see your water quality.")
 
     ec = st.number_input("Enter EC (µS/cm)", value=float(df["EC"].median()))
@@ -90,7 +90,7 @@ elif page == "Prediction":
         st.session_state["last_proba"] = proba
 
         st.success(f"💡 Predicted Water Quality: **{prediction}**")
-        st.balloons()
+        
 
         proba_df = pd.DataFrame({
             "Class": model.classes_,

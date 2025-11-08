@@ -16,3 +16,8 @@ venv/
 *.pkl
 __pycache__/
 !water_quality_xgb_3class.pkl
+
+# OS/IDE noise
+.DS_Store
+.ipynb_checkpoints/
+.virtual_documents/

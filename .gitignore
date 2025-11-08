@@ -11,4 +11,8 @@ venv/
 
 
 # Mac system files
-.DS_Store
+.DS_Store.ipynb_checkpoints/
+.virtual_documents/
+*.pkl
+__pycache__/
+!water_quality_xgb_3class.pkl
